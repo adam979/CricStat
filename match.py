@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import plotting_utils as pu
+import math
 
 class Match:
     def __init__(self, csv_file_path):
@@ -56,6 +57,10 @@ class Match:
         else:
             print("Error: DataFrame is empty. Please read CSV file first.")
 
+    
+                
+
+
     def calculate_run_rate(self):
     
         run_rates_1 = []  # Run rates for innings 1
@@ -77,6 +82,27 @@ class Match:
     
         
         return run_rates_1, run_rates_2
+    
+    def number_of_wicket_fell_in_an_over(self):
+        wicket_inning_1=[]
+        wicket_inning_2=[]
+
+        for inning in [1, 2]:
+            inning_df = self.df[self.df['innings'] == inning]
+            over = 0
+            prev_wicket = 0
+            for i in range(5, len(inning_df),6):
+                over+=1
+                currentWicket = inning_df.iloc[i]['wicketfell'] - prev_wicket
+                if inning == 1:
+                    wicket_inning_1.append((over,currentWicket))
+                else:
+                    wicket_inning_2.append((over, currentWicket)) 
+                
+                prev_wicket = inning_df.iloc[i]['wicketfell']
+                
+        
+        return wicket_inning_1, wicket_inning_2
 
     
     # Add more plotting methods for other metrics as needed    
@@ -102,13 +128,17 @@ class Match:
 
             fig.add_scatter(x=overs_1, y=runs_1, mode='lines', name=f"{batting_team_1} (Inning 1)", line=dict(color='#1f77b4'))
             fig.add_scatter(x=overs_2, y=runs_2, mode='lines', name=f"{batting_team_2} (Inning 2)", line=dict(color='#ff7f0e'))
+            
+            
 
+            
+            # # Customize the plot
             fig = pu.customize_run_rate_plot(fig)
+            fig = pu.add_wicket_circles(fig, self.number_of_wicket_fell_in_an_over(), *self.calculate_run_rate())
             fig.show()
+        
         else:
             print("Error: DataFrame is empty. Please read CSV file first.")
-
-
 
     # Add more plotting methods for other metrics as needed
 
@@ -118,6 +148,7 @@ if __name__ == "__main__":
     match.read_csv()
     match.preprocess_data()
     match.plot_run_rate()
+    print(match.number_of_wicket_fell_in_an_over())
+    
 
-    match.plot_score_vs_delivery()
-
+    # match.plot_score_vs_delivery()
