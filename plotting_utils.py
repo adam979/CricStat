@@ -49,9 +49,93 @@ def add_wicket_circles(fig, wicket_info, run_rates_1, run_rates_2):
             runs = run_rates[over - 1][1]  # Get the runs for the corresponding over
             for i in range(wicket_count):
                 # Adjust y-coordinate for each additional wicket
-                fig.add_trace(go.Scatter(x=[over], y=[runs + i * 0.2], mode='markers', marker=dict(color='red', size=8),
-                                         name='Wicket' if inning == 1 else None))
+                fig.add_trace(go.Scatter(x=[over], y=[runs + i * 0.3], mode='markers', marker=dict(color='red', size=10),
+                                         name=None, hoverinfo='skip', showlegend=False))
     return fig
+
+
+import plotly.graph_objects as go
+
+def add_wicket_circles_for_bar_chart(fig, wicket_info_inning1, wicket_info_inning2, run_rates_1, run_rates_2):
+    """Add circles representing fall of wickets to the plot."""
+    bar_width = 0.6  # Adjust this value according to the width of your bars
+
+    # Plot circles for inning 1
+    for over, wicket_count in wicket_info_inning1:
+        runs = run_rates_1[over - 1][1]  # Get the runs for the corresponding over
+        for i in range(wicket_count):
+            # Calculate the x-coordinate to center the circle on top of the bar
+            x_coord = over - 0.5 + bar_width / 2
+            fig.add_trace(go.Scatter(x=[x_coord], y=[runs + (i * 0.3) + 0.2], mode='markers', marker=dict(color='red', size=10),
+                                     name=None, hoverinfo='skip', showlegend=False))
+
+    # Plot circles for inning 2
+    for over, wicket_count in wicket_info_inning2:
+        runs = run_rates_2[over - 1][1]  # Get the runs for the corresponding over
+        for i in range(wicket_count):
+            # Calculate the x-coordinate to center the circle on top of the bar
+            x_coord = over - 0.075 + bar_width / 2
+            fig.add_trace(go.Scatter(x=[x_coord], y=[runs + (i * 0.3) + 0.2], mode='markers', marker=dict(color='red', size=10),
+                                     name=None, hoverinfo='skip', showlegend=False))
+
+    return fig
+
+
+import plotly.graph_objects as go
+
+def customize_bar_chart(fig, max_overs):
+    """Customize the appearance of the bar chart."""
+    fig.update_layout(
+        title="<b>Run Rate Over Time - Innings 1 vs Innings 2</b>",
+        xaxis_title="<b>Over</b>",
+        yaxis_title="<b>Run Rate</b>",
+        font=dict(
+            family="Arial, sans-serif",
+            size=14,  # Increased font size for better readability
+            color="black"
+        ),
+        plot_bgcolor='rgba(240, 240, 240, 0.9)',  # Light gray background
+        paper_bgcolor='rgba(240, 240, 240, 0.9)',  # Light gray paper background
+        hovermode="x unified",  # Unified hover mode for better comparison
+        hoverlabel=dict(
+            bgcolor="white",
+            font_size=12,
+            font_family="Arial, sans-serif"
+        ),
+        legend=dict(
+            title="<b>Innings</b>",
+            font=dict(
+                family="Arial, sans-serif",
+                size=12,
+                color="black"
+            ),
+            bgcolor='rgba(255, 255, 255, 0.9)',  # Light gray legend background
+            itemsizing='constant'  # Ensure legend item size remains constant
+        ),
+        barmode='group',  # Grouped bars for better comparison
+        bargap=0.1,  # Gap between bars of adjacent location coordinates
+        bargroupgap=0.1,  # Gap between bars of the same location coordinate
+    )
+
+    # Add subtle animation
+    fig.update_layout(transition_duration=500)
+
+    # Update marker properties for enhanced appearance
+    fig.update_traces(marker=dict(opacity=0.9))
+
+    # Update x-axis tick labels to show every over
+    fig.update_xaxes(
+        tickmode='array', 
+        tickvals=list(range(1, max_overs + 1)),
+        tickfont=dict(
+            size=12,  # Increased tick font size
+            color='black'
+        )
+    )
+
+    return fig
+
+
 
 
 

@@ -1,6 +1,7 @@
 import pandas as pd
 import plotly.express as px
 import plotting_utils as pu
+import plotly.graph_objects as go
 import math
 
 class Match:
@@ -56,9 +57,6 @@ class Match:
             fig.show()
         else:
             print("Error: DataFrame is empty. Please read CSV file first.")
-
-    
-                
 
 
     def calculate_run_rate(self):
@@ -139,6 +137,43 @@ class Match:
         
         else:
             print("Error: DataFrame is empty. Please read CSV file first.")
+    
+    def plot_run_rate_bar_chart(self):
+        if self.df is not None:
+            innings_1 = self.df[self.df['innings'] == 1]
+            innings_2 = self.df[self.df['innings'] == 2]
+
+            # Calculate run rates for each innings
+            run_rates_1, run_rates_2 = self.calculate_run_rate()
+
+            # Extract overs and runs for each innings
+            overs_1, runs_1 = zip(*run_rates_1)
+            overs_2, runs_2 = zip(*run_rates_2)
+
+            # Get batting team names for both innings
+            batting_team_1 = innings_1['battingteam'].iloc[0]
+            batting_team_2 = innings_2['battingteam'].iloc[0]
+
+            # Create a bar chart for run rate over time
+            fig = go.Figure()
+
+            # Add bar traces for each inning
+            fig.add_trace(go.Bar(x=overs_1, y=runs_1, name=f"{batting_team_1} (Inning 1)", marker_color='#1f77b4'))
+            fig.add_trace(go.Bar(x=overs_2, y=runs_2, name=f"{batting_team_2} (Inning 2)", marker_color='#ff7f0e'))
+
+            # Add wicket circles
+            # fig = pu.add_wicket_circles_for_bar_chart(fig, self.number_of_wicket_fell_in_an_over(), *self.calculate_run_rate(), len(overs_1), len(overs_2))
+
+            fig = pu.customize_bar_chart(fig, 20)
+            fig = pu.add_wicket_circles_for_bar_chart(fig, *self.number_of_wicket_fell_in_an_over(), *self.calculate_run_rate())
+            # Customize the plot
+            
+
+            # Show the plot
+            fig.show()
+        else:
+            print("Error: DataFrame is empty. Please read CSV file first.")
+
 
     # Add more plotting methods for other metrics as needed
 
@@ -147,8 +182,6 @@ if __name__ == "__main__":
     match = Match("C:\\Users\\sufiy\\OneDrive\\Desktop\\Projects\\CricStat\\data\\1.csv")
     match.read_csv()
     match.preprocess_data()
-    match.plot_run_rate()
-    print(match.number_of_wicket_fell_in_an_over())
-    
-
+    # match.plot_run_rate()
     # match.plot_score_vs_delivery()
+    match.plot_run_rate_bar_chart()
