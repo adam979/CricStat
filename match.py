@@ -60,6 +60,15 @@ class Match:
             # Split dataframe based on innings
             innings_1 = self.df[self.df["innings"] == 1]
             innings_2 = self.df[self.df["innings"] == 2]
+            # Get batting team names for both innings
+            batting_team_1 = innings_1["battingteam"].iloc[0]
+            batting_team_2 = innings_2["battingteam"].iloc[0]
+
+            # Set primary and secondary colors for both batting teams
+            self.set_team_colors(batting_team_1)
+            primary_color_1 = self.primary_color
+            self.set_team_colors(batting_team_2)
+            primary_color_2 = self.primary_color
 
             # Create a figure
             fig = px.line(title="Score Progression - Innings 1 vs Innings 2")
@@ -70,7 +79,7 @@ class Match:
                 y=innings_1["score"],
                 mode="lines",
                 name=f"{innings_1['battingteam'].iloc[0]} (Inning 1)",
-                line=dict(color="#1f77b4"),
+                line=dict(color=primary_color_1),
                 fill="tozeroy",
             )
             fig.add_scatter(
@@ -78,7 +87,7 @@ class Match:
                 y=innings_2["score"],
                 mode="lines",
                 name=f"{innings_2['battingteam'].iloc[0]} (Inning 2)",
-                line=dict(color="#ff7f0e"),
+                line=dict(color=primary_color_2),
                 fill="tozeroy",
             )
 
@@ -273,9 +282,7 @@ if __name__ == "__main__":
     )
     match.read_csv()
     match.preprocess_data()
-    match.team = 'CSK'
-    
     #match.plot_run_rate()
-    #match.plot_score_vs_delivery()
+    match.plot_score_vs_delivery()
     match.plot_run_rate_bar_chart()
     # match.plot_scatter_chart()
