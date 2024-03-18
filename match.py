@@ -14,7 +14,6 @@ class Match:
         self.secondary_colors = None
         self.secondary_color = None
         self.team = None
-    
 
     def read_csv(self):
         """Read the CSV file and load the data into a pandas DataFrame."""
@@ -43,17 +42,14 @@ class Match:
 
         else:
             print("Error: DataFrame is empty. Please read CSV file first.")
-    
-    def set_team_colors(self,team):
+
+    def set_team_colors(self, team):
         primary_colors, secondary_colors = ColorScheme.get_colors(team)
         if primary_colors and secondary_colors:
             self.primary_color = primary_colors[0]
             self.secondary_color = secondary_colors[0]
-            
         else:
             print(f"Error: Color scheme not found for team '{team}'.")
-        
-    
 
     def plot_score_vs_delivery(self):
         if self.df is not None:
@@ -78,7 +74,7 @@ class Match:
                 x=innings_1["ball"],
                 y=innings_1["score"],
                 mode="lines",
-                name=f"{innings_1['battingteam'].iloc[0]} (Inning 1)",
+                name=f"{batting_team_1} (Inning 1)",
                 line=dict(color=primary_color_1),
                 fill="tozeroy",
             )
@@ -86,7 +82,7 @@ class Match:
                 x=innings_2["ball"],
                 y=innings_2["score"],
                 mode="lines",
-                name=f"{innings_2['battingteam'].iloc[0]} (Inning 2)",
+                name=f"{batting_team_2} (Inning 2)",
                 line=dict(color=primary_color_2),
                 fill="tozeroy",
             )
@@ -137,7 +133,6 @@ class Match:
 
         return wicket_inning_1, wicket_inning_2
 
-    # Add more plotting methods for other metrics as needed
     def plot_run_rate(self):
         if self.df is not None:
             innings_1 = self.df[self.df["innings"] == 1]
@@ -186,17 +181,17 @@ class Match:
         if self.df is not None:
             innings_1 = self.df[self.df["innings"] == 1]
             innings_2 = self.df[self.df["innings"] == 2]
-            
+
             # Get batting team names for both innings
             batting_team_1 = innings_1["battingteam"].iloc[0]
             batting_team_2 = innings_2["battingteam"].iloc[0]
-            
+
             # Set primary and secondary colors for both batting teams
             self.set_team_colors(batting_team_1)
             primary_color_1 = self.primary_color
             self.set_team_colors(batting_team_2)
             primary_color_2 = self.primary_color
-            
+
             # Calculate run rates for each innings
             run_rates_1, run_rates_2 = self.calculate_run_rate()
 
@@ -206,7 +201,7 @@ class Match:
 
             # Create a bar chart for run rate over time
             fig = go.Figure()
-            
+
             # Add bar traces for each inning
             fig.add_trace(
                 go.Bar(
@@ -224,22 +219,20 @@ class Match:
                     marker_color=primary_color_2,
                 )
             )
-            
+
             fig = pu.customize_bar_chart(fig, 20)
             fig = pu.add_wicket_circles_for_bar_chart(
                 fig,
                 *self.number_of_wicket_fell_in_an_over(),
                 *self.calculate_run_rate(),
             )
-            
+
             fig.show()
         else:
             print("Error: DataFrame is empty. Please read CSV file first.")
 
-    
     def plot_scatter_chart(self):
-        if self.df is not None: 
-            
+        if self.df is not None:
             df_res_0 = self.df[self.df["res"] == 0]
 
             # Plot the scatter plot with different colors based on innings for res=0
@@ -254,25 +247,24 @@ class Match:
 
             # Update layout
             fig.update_layout(
-                xaxis_title="Overs", 
-                yaxis_title="Innings", 
+                xaxis_title="Overs",
+                yaxis_title="Innings",
                 height=300,
-                font=dict(family="Arial, sans-serif", size=12, color="black")
+                font=dict(family="Arial, sans-serif", size=12, color="black"),
             )
             fig.update_traces(marker=dict(size=12, opacity=0.8))
 
             # Set x-axis tick mode and initial tick value
             fig.update_xaxes(tickmode="linear", tick0=1, dtick=1)
-            
+
             # Set y-axis tick mode and initial tick value
             fig.update_yaxes(tickmode="linear", tick0=0, dtick=1)
-            
+
             fig.show()
         else:
             print("Error: DataFrame is empty. Please read CSV file first.")
 
         # Show plot
-
 
 
 # Test the Match class
@@ -282,7 +274,7 @@ if __name__ == "__main__":
     )
     match.read_csv()
     match.preprocess_data()
-    #match.plot_run_rate()
+    # match.plot_run_rate()
     match.plot_score_vs_delivery()
     match.plot_run_rate_bar_chart()
     # match.plot_scatter_chart()

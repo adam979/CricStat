@@ -5,41 +5,26 @@ def customize_run_rate_plot(fig):
     fig.update_layout(
         xaxis_title="<b>Over</b>",
         yaxis_title="<b>Run Rate (Runs per Over)</b>",
-        font=dict(
-            family="Arial, sans-serif",
-            size=12,
-            color="black"
-        ),
-        plot_bgcolor='rgba(255,255,255,0.9)',
-        paper_bgcolor='rgba(255,255,255,0.9)',
+        font=dict(family="Arial, sans-serif", size=12, color="black"),
+        plot_bgcolor="rgba(255,255,255,0.9)",
+        paper_bgcolor="rgba(255,255,255,0.9)",
         hovermode="x unified",
-        hoverlabel=dict(
-            bgcolor="white",
-            font_size=12,
-            font_family="Arial, sans-serif"
-        ),
+        hoverlabel=dict(bgcolor="white", font_size=12, font_family="Arial, sans-serif"),
         legend=dict(
             title="<b>Innings</b>",
-            font=dict(
-                family="Arial, sans-serif",
-                size=12,
-                color="black"
-            ),
-            bgcolor='rgba(255,255,255,0.9)',
-            itemsizing='constant'
-        )
+            font=dict(family="Arial, sans-serif", size=12, color="black"),
+            bgcolor="rgba(255,255,255,0.9)",
+            itemsizing="constant",
+        ),
     )
 
     # Add subtle animation
     fig.update_layout(transition_duration=500)
 
     # Update marker and line properties for enhanced appearance
-    fig.update_traces(marker=dict(size=8, opacity=0.9),
-                      line=dict(width=3))
+    fig.update_traces(marker=dict(size=8, opacity=0.9), line=dict(width=3))
 
     return fig
-
-
 
 def add_wicket_circles(fig, wicket_info, run_rates_1, run_rates_2):
     """Add circles representing fall of wickets to the plot."""
@@ -49,14 +34,22 @@ def add_wicket_circles(fig, wicket_info, run_rates_1, run_rates_2):
             runs = run_rates[over - 1][1]  # Get the runs for the corresponding over
             for i in range(wicket_count):
                 # Adjust y-coordinate for each additional wicket
-                fig.add_trace(go.Scatter(x=[over], y=[runs + i * 0.3], mode='markers', marker=dict(color='red', size=10),
-                                         name=None, hoverinfo='skip', showlegend=False))
+                fig.add_trace(
+                    go.Scatter(
+                        x=[over],
+                        y=[runs + i * 0.3],
+                        mode="markers",
+                        marker=dict(color="red", size=10),
+                        name=None,
+                        hoverinfo="skip",
+                        showlegend=False,
+                    )
+                )
     return fig
 
-
-import plotly.graph_objects as go
-
-def add_wicket_circles_for_bar_chart(fig, wicket_info_inning1, wicket_info_inning2, run_rates_1, run_rates_2):
+def add_wicket_circles_for_bar_chart(
+    fig, wicket_info_inning1, wicket_info_inning2, run_rates_1, run_rates_2
+):
     """Add circles representing fall of wickets to the plot."""
     bar_width = 0.6  # Adjust this value according to the width of your bars
 
@@ -66,8 +59,17 @@ def add_wicket_circles_for_bar_chart(fig, wicket_info_inning1, wicket_info_innin
         for i in range(wicket_count):
             # Calculate the x-coordinate to center the circle on top of the bar
             x_coord = over - 0.5 + bar_width / 2
-            fig.add_trace(go.Scatter(x=[x_coord], y=[runs + (i * 0.3) + 0.2], mode='markers', marker=dict(color='red', size=10),
-                                     name=None, hoverinfo='skip', showlegend=False))
+            fig.add_trace(
+                go.Scatter(
+                    x=[x_coord],
+                    y=[runs + (i * 0.3) + 0.2],
+                    mode="markers",
+                    marker=dict(color="red", size=10),
+                    name=None,
+                    hoverinfo="skip",
+                    showlegend=False,
+                )
+            )
 
     # Plot circles for inning 2
     for over, wicket_count in wicket_info_inning2:
@@ -75,13 +77,19 @@ def add_wicket_circles_for_bar_chart(fig, wicket_info_inning1, wicket_info_innin
         for i in range(wicket_count):
             # Calculate the x-coordinate to center the circle on top of the bar
             x_coord = over - 0.075 + bar_width / 2
-            fig.add_trace(go.Scatter(x=[x_coord], y=[runs + (i * 0.3) + 0.2], mode='markers', marker=dict(color='red', size=10),
-                                     name=None, hoverinfo='skip', showlegend=False))
+            fig.add_trace(
+                go.Scatter(
+                    x=[x_coord],
+                    y=[runs + (i * 0.3) + 0.2],
+                    mode="markers",
+                    marker=dict(color="red", size=10),
+                    name=None,
+                    hoverinfo="skip",
+                    showlegend=False,
+                )
+            )
 
     return fig
-
-
-import plotly.graph_objects as go
 
 def customize_bar_chart(fig, max_overs):
     """Customize the appearance of the bar chart."""
@@ -92,27 +100,19 @@ def customize_bar_chart(fig, max_overs):
         font=dict(
             family="Arial, sans-serif",
             size=14,  # Increased font size for better readability
-            color="black"
+            color="black",
         ),
-        plot_bgcolor='rgba(240, 240, 240, 0.9)',  # Light gray background
-        paper_bgcolor='rgba(240, 240, 240, 0.9)',  # Light gray paper background
+        plot_bgcolor="rgba(240, 240, 240, 0.9)",  # Light gray background
+        paper_bgcolor="rgba(240, 240, 240, 0.9)",  # Light gray paper background
         hovermode="x unified",  # Unified hover mode for better comparison
-        hoverlabel=dict(
-            bgcolor="white",
-            font_size=12,
-            font_family="Arial, sans-serif"
-        ),
+        hoverlabel=dict(bgcolor="white", font_size=12, font_family="Arial, sans-serif"),
         legend=dict(
             title="<b>Innings</b>",
-            font=dict(
-                family="Arial, sans-serif",
-                size=12,
-                color="black"
-            ),
-            bgcolor='rgba(255, 255, 255, 0.9)',  # Light gray legend background
-            itemsizing='constant'  # Ensure legend item size remains constant
+            font=dict(family="Arial, sans-serif", size=12, color="black"),
+            bgcolor="rgba(255, 255, 255, 0.9)",  # Light gray legend background
+            itemsizing="constant",  # Ensure legend item size remains constant
         ),
-        barmode='group',  # Grouped bars for better comparison
+        barmode="group",  # Grouped bars for better comparison
         bargap=0.1,  # Gap between bars of adjacent location coordinates
         bargroupgap=0.1,  # Gap between bars of the same location coordinate
     )
@@ -125,62 +125,54 @@ def customize_bar_chart(fig, max_overs):
 
     # Update x-axis tick labels to show every over
     fig.update_xaxes(
-        tickmode='array', 
+        tickmode="array",
         tickvals=list(range(1, max_overs + 1)),
         tickfont=dict(
             size=12,  # Increased tick font size
-            color='black'
-        )
+            color="black",
+        ),
     )
 
     return fig
 
-
-
-
-
-
 def customize_plot_vs_score_plot(fig):
     # Update layout for enhanced appearance
-            fig.update_layout(
-                xaxis_title="<b>Delivery</b>",
-                yaxis_title="<b>Score</b>",
-                font=dict(
-                    family="Arial, sans-serif",
-                    size=12,
-                    color="black"
-                ),
-                plot_bgcolor='rgba(255,255,255,0.9)',
-                paper_bgcolor='rgba(255,255,255,0.9)',
-                hovermode="x unified",  # Unified hover mode for better comparison
-                hoverlabel=dict(
-                    bgcolor="white",
-                    font_size=12,
-                    font_family="Arial, sans-serif"
-                ),
-                legend=dict(
-                    title="<b>Innings</b>",
-                    font=dict(
-                        family="Arial, sans-serif",
-                        size=12,
-                        color="black"
-                    ),
-                    bgcolor='rgba(255,255,255,0.9)',
-                    itemsizing='constant'  # Ensure legend item size remains constant
-                )
-            )
+    
+    fig.update_layout(
+        xaxis_title="<b>Delivery</b>",
+        yaxis_title="<b>Score</b>",
+        font=dict(family="Arial, sans-serif", size=12, color="black"),
+        plot_bgcolor="rgba(255,255,255,0.9)",
+        paper_bgcolor="rgba(255,255,255,0.9)",
+        hovermode="x unified",  # Unified hover mode for better comparison
+        hoverlabel=dict(bgcolor="white", font_size=12, font_family="Arial, sans-serif"),
+        legend=dict(
+            title="<b>Innings</b>",
+            font=dict(family="Arial, sans-serif", size=12, color="black"),
+            bgcolor="rgba(255,255,255,0.9)",
+            itemsizing="constant",  # Ensure legend item size remains constant
+        ),
+    )
 
-            # Add subtle animation
-            fig.update_layout(transition_duration=500)
+    # Add subtle animation
+    fig.update_layout(transition_duration=500)
 
-            # Update marker and line properties for enhanced appearance
-            fig.update_traces(marker=dict(size=8, opacity=0.9),
-                            line=dict(width=3))
+    # Update marker and line properties for enhanced appearance
+    fig.update_traces(marker=dict(size=8, opacity=0.9), line=dict(width=3))
 
-            # Add annotations for key moments in the match (optional)
-            fig.add_annotation(x=60, y=100, text="Halfway Mark", showarrow=True, arrowhead=1, ax=30, ay=-30, font=dict(color="black", size=12))
+    # Add annotations for key moments in the match (optional)
+    fig.add_annotation(
+        x=60,
+        y=100,
+        text="Halfway Mark",
+        showarrow=True,
+        arrowhead=1,
+        ax=30,
+        ay=-30,
+        font=dict(color="black", size=12),
+    )
 
-            # Add custom hover information
-            fig.update_traces(hovertemplate="Delivery: %{x}<br>Score: %{y}<br>")
+    # Add custom hover information
+    fig.update_traces(hovertemplate="Delivery: %{x}<br>Score: %{y}<br>")
 
-            return fig
+    return fig
