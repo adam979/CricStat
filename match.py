@@ -4,7 +4,6 @@ import plotting_utils as pu
 import plotly.graph_objects as go
 from color_scheme import ColorScheme
 
-
 class Match:
     def __init__(self, csv_file_path):
         self.csv_file_path = csv_file_path
@@ -14,6 +13,9 @@ class Match:
         self.secondary_colors = None
         self.secondary_color = None
         self.team = None
+        # self.battingteam = None
+        # self.bowlingteam = None
+    
 
     def read_csv(self):
         """Read the CSV file and load the data into a pandas DataFrame."""
@@ -56,6 +58,9 @@ class Match:
             # Split dataframe based on innings
             innings_1 = self.df[self.df["innings"] == 1]
             innings_2 = self.df[self.df["innings"] == 2]
+
+            innings_1_powerplay = innings_1[innings_1["powerplay"] == 1]
+            innings_2_powerplay = innings_2[innings_2["powerplay"] == 1]
             # Get batting team names for both innings
             batting_team_1 = innings_1["battingteam"].iloc[0]
             batting_team_2 = innings_2["battingteam"].iloc[0]
@@ -85,6 +90,30 @@ class Match:
                 name=f"{batting_team_2} (Inning 2)",
                 line=dict(color=primary_color_2),
                 fill="tozeroy",
+            )
+            fig.add_trace(
+                go.Scatter(
+                    x=innings_1_powerplay["ball"],
+                    y=innings_1_powerplay["score"],
+                    mode="lines",
+                    name=f"{batting_team_1} (Powerplay)",
+                    line=dict(color=primary_color_1),
+                    fill="tozeroy",
+                    visible='legendonly',  # Initially hidden
+                    showlegend=True
+                )
+            )
+            fig.add_trace(
+                go.Scatter(
+                    x=innings_2_powerplay["ball"],
+                    y=innings_2_powerplay["score"],
+                    mode="lines",
+                    name=f"{batting_team_2} (Powerplay)",
+                    line=dict(color=primary_color_2),
+                    fill="tozeroy",
+                    visible='legendonly',  # Initially hidden
+                    showlegend=True
+                )
             )
 
             fig = pu.customize_plot_vs_score_plot(fig)
@@ -270,7 +299,7 @@ class Match:
 # Test the Match class
 if __name__ == "__main__":
     match = Match(
-        "C:\\Users\\sufiy\\OneDrive\\Desktop\\Projects\\CricStat\\data\\1.csv"
+        "C:\\Users\\sufiy\\OneDrive\\Desktop\\Projects\\CricStat\\data\\0.csv"
     )
     match.read_csv()
     match.preprocess_data()

@@ -137,7 +137,6 @@ def customize_bar_chart(fig, max_overs):
 
 def customize_plot_vs_score_plot(fig):
     # Update layout for enhanced appearance
-    
     fig.update_layout(
         xaxis_title="<b>Delivery</b>",
         yaxis_title="<b>Score</b>",
@@ -153,7 +152,35 @@ def customize_plot_vs_score_plot(fig):
             itemsizing="constant",  # Ensure legend item size remains constant
         ),
     )
-
+    # fig.update_layout(
+    #     updatemenus=[
+    #         {
+    #             "buttons": [
+    #                 {
+    #                     "args": [{"visible": [False, True]}, {"title": "Inning 1"}],
+    #                     "label": "Inning 1",
+    #                     "method": "update",
+    #                 },
+    #                 {
+    #                     "args": [{"visible": [True, False]}, {"title": "Inning 2"}],
+    #                     "label": "Inning 2",
+    #                     "method": "update",
+    #                 },
+    #                 {
+    #                     "args": [{"visible": [True, True]}, {"title": "Both Innings"}],
+    #                     "label": "Both Innings",
+    #                     "method": "update",
+    #                 },
+    #             ],
+    #             "direction": "down",
+    #             "showactive": True,
+    #             "x": 0.5,
+    #             "xanchor": "center",
+    #             "y": 1.15,
+    #             "yanchor": "top",
+    #         },
+    #     ]
+    # )
     # Add subtle animation
     fig.update_layout(transition_duration=500)
 

@@ -1,0 +1,32 @@
+*Run vs Balls, Teams, Powerplay
+*Run vs Balls, Teams, Powerplay, Bowler/type
+*Run vs Balls, Openers, Powerplay
+*Run vs Balls, Teams, Middle Overs, Bowler/type
+*Run vs Balls, Teams, Middle Overs
+Wicket in Powerplay, Teams
+Wicket in Middle over, Teams
+Wicket in Death over, Teams
+Wicket in Powerplay, Teams, Bowler
+Wicket in Middle over, Teams, Bowler
+Wicket in Death over, Teams, Bowler
+**Does opener playing after powerplay helps?
+Strike rate difference in Powerplay, Middle Overs, same batsman
+Strike rate difference in Middle Overs, Death over, same batsman
+Run rate, Teams, Powerplay
+Run rate, Teams, Middle Overs
+Run rate, Teams, Death Overs
+No. of dot balls, PMD
+No. of dot balls, Bowler/Type
+No. of boundaries hit
+Balls since boundary, Team
+Balls since boundary, Batsman
+Strategic timeout and related wicket in 2-3 overs
+Run Rate drop after wicket
+Balls per boundary, PMD
+**Big over, Turning point??
+**Big over, then wickets, Turning point??
+Wicket left in end, and strike rate?
+Left arm spinner v/s leg spinner
+Run scored by no5,6,7 batter
+Designated batsman lower order batter vs allrounder
+Bowler type and wicket in team
