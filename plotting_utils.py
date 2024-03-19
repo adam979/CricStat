@@ -1,5 +1,6 @@
 import plotly.graph_objects as go
 
+
 def customize_run_rate_plot(fig):
     """Customize the appearance of the run rate plot."""
     fig.update_layout(
@@ -26,6 +27,7 @@ def customize_run_rate_plot(fig):
 
     return fig
 
+
 def add_wicket_circles(fig, wicket_info, run_rates_1, run_rates_2):
     """Add circles representing fall of wickets to the plot."""
     for inning, wickets_inning in enumerate(wicket_info, start=1):
@@ -46,6 +48,7 @@ def add_wicket_circles(fig, wicket_info, run_rates_1, run_rates_2):
                     )
                 )
     return fig
+
 
 def add_wicket_circles_for_bar_chart(
     fig, wicket_info_inning1, wicket_info_inning2, run_rates_1, run_rates_2
@@ -91,6 +94,7 @@ def add_wicket_circles_for_bar_chart(
 
     return fig
 
+
 def customize_bar_chart(fig, max_overs):
     """Customize the appearance of the bar chart."""
     fig.update_layout(
@@ -135,6 +139,7 @@ def customize_bar_chart(fig, max_overs):
 
     return fig
 
+
 def customize_plot_vs_score_plot(fig):
     # Update layout for enhanced appearance
     fig.update_layout(
@@ -152,35 +157,8 @@ def customize_plot_vs_score_plot(fig):
             itemsizing="constant",  # Ensure legend item size remains constant
         ),
     )
-    # fig.update_layout(
-    #     updatemenus=[
-    #         {
-    #             "buttons": [
-    #                 {
-    #                     "args": [{"visible": [False, True]}, {"title": "Inning 1"}],
-    #                     "label": "Inning 1",
-    #                     "method": "update",
-    #                 },
-    #                 {
-    #                     "args": [{"visible": [True, False]}, {"title": "Inning 2"}],
-    #                     "label": "Inning 2",
-    #                     "method": "update",
-    #                 },
-    #                 {
-    #                     "args": [{"visible": [True, True]}, {"title": "Both Innings"}],
-    #                     "label": "Both Innings",
-    #                     "method": "update",
-    #                 },
-    #             ],
-    #             "direction": "down",
-    #             "showactive": True,
-    #             "x": 0.5,
-    #             "xanchor": "center",
-    #             "y": 1.15,
-    #             "yanchor": "top",
-    #         },
-    #     ]
-    # )
+    
+  
     # Add subtle animation
     fig.update_layout(transition_duration=500)
 

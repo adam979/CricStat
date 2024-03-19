@@ -53,74 +53,59 @@ class Match:
         else:
             print(f"Error: Color scheme not found for team '{team}'.")
 
-    def plot_score_vs_delivery(self):
+    def generate_plot_score_vs_delivery(self, inning_toggle, over_type_toggle):
         if self.df is not None:
-            # Split dataframe based on innings
-            innings_1 = self.df[self.df["innings"] == 1]
-            innings_2 = self.df[self.df["innings"] == 2]
+            # Apply filters based on inning toggle and over type toggle
+            filtered_df = self.df.copy()  # Make a copy to avoid modifying the original DataFrame
 
-            innings_1_powerplay = innings_1[innings_1["powerplay"] == 1]
-            innings_2_powerplay = innings_2[innings_2["powerplay"] == 1]
+            if inning_toggle == "Inning 1":
+                filtered_df = filtered_df[filtered_df["innings"] == 1]
+            elif inning_toggle == "Inning 2":
+                filtered_df = filtered_df[filtered_df["innings"] == 2]
+
+            if over_type_toggle == "Powerplay":
+                filtered_df = filtered_df[filtered_df["over"] <= 6]
+            elif over_type_toggle == "Middle Overs":
+                filtered_df = filtered_df[(filtered_df["over"] >= 7) & (filtered_df["over"] <= 15)]
+            elif over_type_toggle == "Death Overs":
+                filtered_df = filtered_df[filtered_df["over"] > 15]
+
             # Get batting team names for both innings
-            batting_team_1 = innings_1["battingteam"].iloc[0]
-            batting_team_2 = innings_2["battingteam"].iloc[0]
+            batting_team = filtered_df["battingteam"].iloc[0]
+            
 
             # Set primary and secondary colors for both batting teams
-            self.set_team_colors(batting_team_1)
-            primary_color_1 = self.primary_color
-            self.set_team_colors(batting_team_2)
-            primary_color_2 = self.primary_color
+            self.set_team_colors(batting_team)
+            primary_color = self.primary_color
+            
 
             # Create a figure
             fig = px.line(title="Score Progression - Innings 1 vs Innings 2")
 
             # Add traces for each inning with filled areas under the curve
             fig.add_scatter(
-                x=innings_1["ball"],
-                y=innings_1["score"],
+                x=filtered_df["ball"],
+                y=filtered_df["score"],
                 mode="lines",
-                name=f"{batting_team_1} (Inning 1)",
-                line=dict(color=primary_color_1),
+                name=f"{batting_team} ({inning_toggle})",
+                line=dict(color=primary_color),
                 fill="tozeroy",
             )
-            fig.add_scatter(
-                x=innings_2["ball"],
-                y=innings_2["score"],
-                mode="lines",
-                name=f"{batting_team_2} (Inning 2)",
-                line=dict(color=primary_color_2),
-                fill="tozeroy",
-            )
-            fig.add_trace(
-                go.Scatter(
-                    x=innings_1_powerplay["ball"],
-                    y=innings_1_powerplay["score"],
-                    mode="lines",
-                    name=f"{batting_team_1} (Powerplay)",
-                    line=dict(color=primary_color_1),
-                    fill="tozeroy",
-                    visible='legendonly',  # Initially hidden
-                    showlegend=True
-                )
-            )
-            fig.add_trace(
-                go.Scatter(
-                    x=innings_2_powerplay["ball"],
-                    y=innings_2_powerplay["score"],
-                    mode="lines",
-                    name=f"{batting_team_2} (Powerplay)",
-                    line=dict(color=primary_color_2),
-                    fill="tozeroy",
-                    visible='legendonly',  # Initially hidden
-                    showlegend=True
-                )
-            )
+
+            # Set x-axis range based on the over type
+            if over_type_toggle == "Powerplay":
+                fig.update_xaxes(range=[0, 6])
+            elif over_type_toggle == "Middle Overs":
+                fig.update_xaxes(range=[7, 15])
+            elif over_type_toggle == "Death Overs":
+                fig.update_xaxes(range=[16, filtered_df["ball"].max()])
 
             fig = pu.customize_plot_vs_score_plot(fig)
             # Show the plot
-            fig.show()
+            return fig
         else:
             print("Error: DataFrame is empty. Please read CSV file first.")
+
 
     def calculate_run_rate(self):
         run_rates_1 = []  # Run rates for innings 1
@@ -304,6 +289,6 @@ if __name__ == "__main__":
     match.read_csv()
     match.preprocess_data()
     # match.plot_run_rate()
-    match.plot_score_vs_delivery()
-    match.plot_run_rate_bar_chart()
+    # match.plot_score_vs_delivery()
+    # match.plot_run_rate_bar_chart()
     # match.plot_scatter_chart()
