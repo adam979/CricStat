@@ -4,18 +4,18 @@ import plotting_utils as pu
 import plotly.graph_objects as go
 from color_scheme import ColorScheme
 
+
 class Match:
-    def __init__(self, csv_file_path):
+    def __init__(self, csv_file_path, player_info_csv):
         self.csv_file_path = csv_file_path
+        self.player_info_csv = player_info_csv
         self.df = None
+        self.player_info_df = None
         self.primary_colors = None
         self.primary_color = None
         self.secondary_colors = None
         self.secondary_color = None
         self.team = None
-        # self.battingteam = None
-        # self.bowlingteam = None
-    
 
     def read_csv(self):
         """Read the CSV file and load the data into a pandas DataFrame."""
@@ -25,18 +25,26 @@ class Match:
             print(f"Error: File '{self.csv_file_path}' not found.")
             self.df = None
 
+    def read_player_info_csv(self):
+        """Read the player information CSV file."""
+        try:
+            self.player_info_df = pd.read_csv(self.player_info_csv)
+        except FileNotFoundError:
+            print(f"Error: File '{self.player_info_csv}' not found.")
+            self.player_info_df = None
+
     def preprocess_data(self):
         """Preprocess the data as needed."""
         if self.df is not None:
             # Convert overs to balls
-            def overs_to_balls(over):
+            def delivery_to_balls(delivery):
                 try:
-                    overs, balls = map(int, str(over).split("."))
+                    overs, balls = map(int, str(delivery).split("."))
                     return overs * 6 + balls
                 except ValueError:
                     return None
 
-            self.df["ball"] = self.df["delivery"].apply(overs_to_balls)
+            self.df["ball"] = self.df["delivery"].apply(delivery_to_balls)
             # Convert 'res' column to numeric dtype
             self.df["res"] = pd.to_numeric(self.df["res"], errors="coerce")
 
@@ -61,6 +69,8 @@ class Match:
 
             innings_1_powerplay = innings_1[innings_1["powerplay"] == 1]
             innings_2_powerplay = innings_2[innings_2["powerplay"] == 1]
+
+            # inning_1_middle_over = innings_1[innings_1["over"] == 1]
             # Get batting team names for both innings
             batting_team_1 = innings_1["battingteam"].iloc[0]
             batting_team_2 = innings_2["battingteam"].iloc[0]
@@ -99,8 +109,8 @@ class Match:
                     name=f"{batting_team_1} (Powerplay)",
                     line=dict(color=primary_color_1),
                     fill="tozeroy",
-                    visible='legendonly',  # Initially hidden
-                    showlegend=True
+                    visible="legendonly",  # Initially hidden
+                    showlegend=True,
                 )
             )
             fig.add_trace(
@@ -111,8 +121,8 @@ class Match:
                     name=f"{batting_team_2} (Powerplay)",
                     line=dict(color=primary_color_2),
                     fill="tozeroy",
-                    visible='legendonly',  # Initially hidden
-                    showlegend=True
+                    visible="legendonly",  # Initially hidden
+                    showlegend=True,
                 )
             )
 
@@ -122,13 +132,37 @@ class Match:
         else:
             print("Error: DataFrame is empty. Please read CSV file first.")
 
-    def calculate_run_rate(self):
+    def calculate_run_rate(self, df=None, over_type=None):
+        if df is None:
+            df = self.df
+
         run_rates_1 = []  # Run rates for innings 1
         run_rates_2 = []  # Run rates for innings 2
 
         for inning in [1, 2]:
-            inning_df = self.df[self.df["innings"] == inning]
-            over = 0
+            inning_df = df[df["innings"] == inning]
+
+            # If over_type is not specified, calculate run rate inning-wise
+            if over_type is None:
+                initial_over = 0
+            else:
+                # Determine the initial value of the over based on the inning and over type
+                if inning == 1:
+                    initial_over = 0
+                else:
+                    # Adjust the initial over value based on the over type
+                    if over_type == "Powerplay":
+                        initial_over = 0
+                    elif over_type == "Middle Overs":
+                        initial_over = 6
+                    elif over_type == "Death Overs":
+                        initial_over = 15
+                    else:
+                        print("Invalid over type.")
+                        return None
+
+            # Initialize the over variable with the correct initial value
+            over = initial_over
 
             for i in range(5, len(inning_df), 6):
                 over += 1
@@ -141,6 +175,7 @@ class Match:
                     run_rates_2.append((over, run_rate))
 
         return run_rates_1, run_rates_2
+
 
     def number_of_wicket_fell_in_an_over(self):
         wicket_inning_1 = []
@@ -161,6 +196,19 @@ class Match:
                 prev_wicket = inning_df.iloc[i]["wicketfell"]
 
         return wicket_inning_1, wicket_inning_2
+
+    def type_of_over(self, over_type):
+        if over_type == "Powerplay":
+            condition = (self.df["over"] > 0) & (self.df["over"] < 7)
+        elif over_type == "Middle Overs":
+            condition = (self.df["over"] > 6) & (self.df["over"] < 16)
+        elif over_type == "Death Overs":
+            condition = (self.df["over"] > 15) & (self.df["over"] < 21)
+        else:
+            print("Invalid over type.")
+            return None
+
+        return self.df[condition]
 
     def plot_run_rate(self):
         if self.df is not None:
@@ -221,23 +269,39 @@ class Match:
             self.set_team_colors(batting_team_2)
             primary_color_2 = self.primary_color
 
-            # Calculate run rates for each innings
-            run_rates_1, run_rates_2 = self.calculate_run_rate()
+            # Calculate overall run rates for each innings
+            overall_run_rates_1, overall_run_rates_2 = self.calculate_run_rate()
 
             # Extract overs and runs for each innings
-            overs_1, runs_1 = zip(*run_rates_1)
-            overs_2, runs_2 = zip(*run_rates_2)
+            overs_1, runs_1 = zip(*overall_run_rates_1)
+            overs_2, runs_2 = zip(*overall_run_rates_2)
 
             # Create a bar chart for run rate over time
             fig = go.Figure()
+            timeout_overs = self.df.loc[
+                self.df["strategictimeout"] == 1, "over"
+            ].tolist()
 
-            # Add bar traces for each inning
+            for over in timeout_overs:
+                fig.add_trace(
+                    go.Scatter(
+                        x=[over, over],
+                        y=[0, 36],
+                        mode="lines",
+                        name=f"Strategic Timeout - Over {over}",
+                        line=dict(color="red", width=1, dash="dash"),
+                        visible="legendonly",  # Initially hidden
+                    )
+                )
+
+            # Add bar traces for overall run rate
             fig.add_trace(
                 go.Bar(
                     x=overs_1,
                     y=runs_1,
                     name=f"{batting_team_1} (Inning 1)",
                     marker_color=primary_color_1,
+                    visible="legendonly",  # Initially hidden
                 )
             )
             fig.add_trace(
@@ -246,19 +310,48 @@ class Match:
                     y=runs_2,
                     name=f"{batting_team_2} (Inning 2)",
                     marker_color=primary_color_2,
+                    visible="legendonly",  # Initially hidden
                 )
             )
 
-            fig = pu.customize_bar_chart(fig, 20)
-            fig = pu.add_wicket_circles_for_bar_chart(
-                fig,
-                *self.number_of_wicket_fell_in_an_over(),
-                *self.calculate_run_rate(),
-            )
+            over_types = ["Powerplay", "Middle Overs", "Death Overs"]
+            for over_type in over_types:
+                run_rate_df = self.type_of_over(over_type)
+                if run_rate_df is not None:
+                    # Calculate run rates for the current over type
+                    run_rates_1_type, run_rates_2_type = self.calculate_run_rate(df=run_rate_df, over_type=over_type)
 
+                    # Extract overs and runs for each innings for the current over type
+                    overs_1_type, runs_1_type = zip(*run_rates_1_type)
+                    overs_2_type, runs_2_type = zip(*run_rates_2_type)
+
+                    # Add bar traces for the current over type
+                    fig.add_trace(
+                        go.Bar(
+                            x=overs_1_type,
+                            y=runs_1_type,
+                            name=f"{batting_team_1} (Inning 1) - {over_type}",
+                            marker_color=primary_color_1,
+                            visible="legendonly",  # Initially hidden
+                        )
+                    )
+                    fig.add_trace(
+                        go.Bar(
+                            x=overs_2_type,
+                            y=runs_2_type,
+                            name=f"{batting_team_2} (Inning 2) - {over_type}",
+                            marker_color=primary_color_2,
+                            visible="legendonly",  # Initially hidden
+                        )
+                    )
+
+            fig = pu.customize_bar_chart(fig, 20)
+
+            fig.update_yaxes()
             fig.show()
         else:
             print("Error: DataFrame is empty. Please read CSV file first.")
+
 
     def plot_scatter_chart(self):
         if self.df is not None:
@@ -299,11 +392,14 @@ class Match:
 # Test the Match class
 if __name__ == "__main__":
     match = Match(
-        "C:\\Users\\sufiy\\OneDrive\\Desktop\\Projects\\CricStat\\data\\0.csv"
+        "C:\\Users\\sufiy\\OneDrive\\Desktop\\Projects\\CricStat\\data\\0.csv",
+        "C:\\Users\\sufiy\\OneDrive\\Desktop\\Projects\\CricStat\\data\\playerdata.csv",
     )
     match.read_csv()
+    match.read_player_info_csv()
     match.preprocess_data()
     # match.plot_run_rate()
-    match.plot_score_vs_delivery()
+    # match.plot_score_vs_delivery()
+
     match.plot_run_rate_bar_chart()
     # match.plot_scatter_chart()

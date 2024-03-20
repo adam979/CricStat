@@ -10,7 +10,7 @@ class ColorScheme:
             "Primary": ["#17479e", "#113577"],
             "Secondary": ["#d71921", "#fd1d26", "#fb042d"],
         },
-        "GG": {"Primary": ["#1d314d", "#1993ff"], "Secondary": ["#dec16d", "#ffe67d"]},
+        "GT": {"Primary": ["#1d314d", "#1993ff"], "Secondary": ["#dec16d", "#ffe67d"]},
         "KKR": {
             "Primary": ["#53367d", "#704fa1", "#5d3696"],
             "Secondary": ["#f2bf26", "#e3ad3e"],

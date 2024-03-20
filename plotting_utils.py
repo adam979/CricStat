@@ -46,6 +46,16 @@ def add_wicket_circles(fig, wicket_info, run_rates_1, run_rates_2):
                     )
                 )
     return fig
+def calculate_bar_width(fig, num_visible_traces):
+    """
+    Calculate the width of bars based on the number of visible traces.
+    """
+    num_visible_bars = sum(
+        fig.data[i].visible == "legendonly" for i in range(num_visible_traces)
+    )
+    total_bar_width = 0.8  # Total width available for bars
+    return total_bar_width / num_visible_bars if num_visible_bars > 0 else 0
+
 
 def add_wicket_circles_for_bar_chart(
     fig, wicket_info_inning1, wicket_info_inning2, run_rates_1, run_rates_2

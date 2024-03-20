@@ -1,0 +1,6 @@
+Run_Rate before vs after time out
+number of boundaries in each phase (pp,md,do) [bar chart]
+big over turning point (tallest over or most wicket) [highlight that peak in a different color]
+wickets left in the end (inning wise) [bar chart]
+number of dots faced in each phase (pp,md,do) [pie chart]
+batter strike rate during pp and after pp if opener plays both during pp and beyond until they get out [double bar chart]
